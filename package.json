@@ -28,10 +28,12 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mime-types": "^3.0.1",
     "@types/node": "^24.0.0",
     "drizzle-kit": "^0.31.5",
+    "eslint": "^8.57.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   }

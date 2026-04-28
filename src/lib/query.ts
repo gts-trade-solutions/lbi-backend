@@ -299,7 +299,7 @@ async function runInsert(body: QueryBody, userId: string) {
   );
 
   const sql = `INSERT INTO ${qIdent(table)} (${cols.map(qIdent).join(",")}) VALUES ${valuesSql}`;
-  await pool.execute(sql, args);
+await pool.execute(sql, args as any[]);
   console.log(
     `[db/query] insert table=${table} user=${userId} rowCount=${prepared.length} select=${Boolean(
       body.select
@@ -358,7 +358,7 @@ async function runUpdate(body: QueryBody, userId: string) {
   if (!where.sql) throw new Error("Unsafe update without where");
 
   const sql = `UPDATE ${qIdent(table)} SET ${setSql}${where.sql}`;
-  await pool.execute(sql, [...setArgs, ...where.args]);
+  await pool.execute(sql, [...setArgs, ...where.args] as any[]);
   return [];
 }
 
@@ -368,7 +368,7 @@ async function runDelete(body: QueryBody, userId: string) {
   if (!where.sql) throw new Error("Unsafe delete without where");
 
   const sql = `DELETE FROM ${qIdent(table)}${where.sql}`;
-  await pool.execute(sql, where.args);
+ await pool.execute(sql, where.args as any[]);
   return [];
 }
 
@@ -404,10 +404,10 @@ async function runUpsert(body: QueryBody, userId: string) {
     ? ` ON DUPLICATE KEY UPDATE ${updateCols.map((c) => `${qIdent(c)} = VALUES(${qIdent(c)})`).join(", ")}`
     : "";
 
-  await pool.execute(
-    `${insertSql}${updateSql}`,
-    cols.map((c) => normalizeDbValue(table, c, out[c]))
-  );
+ await pool.execute(
+  `${insertSql}${updateSql}`,
+  cols.map((c) => normalizeDbValue(table, c, out[c])) as any[]
+);
 
   if (body.select) {
     return runSelect(
