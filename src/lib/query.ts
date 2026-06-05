@@ -30,6 +30,7 @@ const TABLE_COLUMNS: Record<string, Set<string>> = {
     "updated_at",
     "last_modified_by",
     "created_by",
+    "deleted_at",
   ]),
   routes: new Set(["id", "project_id", "name", "created_at", "updated_at", "user_id"]),
   route_points: new Set([
@@ -62,6 +63,7 @@ const TABLE_COLUMNS: Record<string, Set<string>> = {
     "sort_order",
     "remarks_action",
     "point_key",
+    "deleted_at",
   ]),
   report_photos: new Set([
     "id",
@@ -124,7 +126,8 @@ const UUID_ID_TABLES = new Set([
 ]);
 
 const MYSQL_DATETIME_COLUMNS: Record<string, Set<string>> = {
-  reports: new Set(["loc_time"]),
+  reports: new Set(["loc_time", "deleted_at"]),
+  projects: new Set(["deleted_at"]),
   route_points: new Set(["timestamp"]),
   report_path_points: new Set(["timestamp"]),
 };
