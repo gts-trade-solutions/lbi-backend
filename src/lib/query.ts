@@ -118,6 +118,14 @@ const USER_SCOPE_COLUMN: Record<string, string> = {
   login_events: "user_id",
 };
 
+// Tables that are a SHARED workspace on READ: every authenticated user sees all
+// rows regardless of who created them. `projects` is a common list — everyone
+// sees the same projects and can pick one to work under — while each person's
+// captures (reports/photos/paths) and the home map stay owner-scoped via
+// USER_SCOPE_COLUMN. Writes (insert/update/delete) are NOT shared: they keep the
+// owner filter below, so a user can only edit or delete projects they created.
+const SHARED_READ_TABLES = new Set<string>(["projects"]);
+
 const UUID_ID_TABLES = new Set([
   "projects",
   "routes",
@@ -209,12 +217,17 @@ function normalizeDbValue(table: string, column: string, value: unknown) {
   return value;
 }
 
-function buildWhere(table: string, userId: string, filters: Filter[] = []) {
+function buildWhere(
+  table: string,
+  userId: string,
+  filters: Filter[] = [],
+  enforceUserScope = true
+) {
   const scopeCol = USER_SCOPE_COLUMN[table];
   const whereSql: string[] = [];
   const args: unknown[] = [];
 
-  if (scopeCol) {
+  if (scopeCol && enforceUserScope) {
     whereSql.push(`${qIdent(scopeCol)} = ?`);
     args.push(userId);
   }
@@ -247,7 +260,11 @@ function buildWhere(table: string, userId: string, filters: Filter[] = []) {
 async function runSelect(body: QueryBody, userId: string) {
   const table = body.table;
   const cols = parseSelectColumns(table, body.select);
-  const where = buildWhere(table, userId, body.filters || []);
+  // Shared-read tables (e.g. projects) are visible to every user, so a SELECT is
+  // not restricted to the caller's own rows. Writes still go through the
+  // owner-scoped buildWhere default in runUpdate/runDelete/runUpsert.
+  const enforceUserScope = !SHARED_READ_TABLES.has(table);
+  const where = buildWhere(table, userId, body.filters || [], enforceUserScope);
 
   let orderSql = "";
   const order = body.order || [];
