@@ -60,6 +60,7 @@ export const projects = mysqlTable(
     updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
     lastModifiedBy: varchar("last_modified_by", { length: 36 }),
     createdBy: varchar("created_by", { length: 36 }),
+    photoDateStamp: boolean("photo_date_stamp").notNull().default(true),
   },
   (t) => ({
     projectsUserCreatedIdx: index("ix_projects_user_created").on(t.userId, t.createdAt),

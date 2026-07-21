@@ -31,6 +31,7 @@ const TABLE_COLUMNS: Record<string, Set<string>> = {
     "last_modified_by",
     "created_by",
     "deleted_at",
+    "photo_date_stamp",
   ]),
   routes: new Set(["id", "project_id", "name", "created_at", "updated_at", "user_id"]),
   route_points: new Set([

@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS projects (
   updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   last_modified_by varchar(36) NULL,
   created_by varchar(36) NULL,
+  photo_date_stamp tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (id),
   KEY ix_projects_user_created (user_id, created_at)
 );
